@@ -22,7 +22,6 @@
       .font-game {
         font-family: 'Titan One', cursive;
       }
-      /* Custom scrollbar for plant selector if needed */
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -46,29 +45,99 @@
         background-size: 20px 20px;
         background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
       }
+
+      /* On-screen Debug Console Styles */
+      #debug-log {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: rgba(0, 0, 0, 0.85);
+        color: #0f0;
+        font-family: monospace;
+        font-size: 12px;
+        overflow-y: auto;
+        z-index: 9999;
+        padding: 10px;
+        border-top: 2px solid #0f0;
+        pointer-events: none; /* Let clicks pass through to game */
+      }
+      #debug-log .log-entry { margin-bottom: 2px; border-bottom: 1px solid #333; word-wrap: break-word; }
+      #debug-log .log-entry.error { color: #ff5555; background: rgba(255, 0, 0, 0.1); }
+      #debug-log .log-entry.warn { color: #ffff55; }
+      #debug-log .log-entry.info { color: #55ffff; }
+      
+      /* Only show console if we are not in production or if needed. Keeping it visible for debugging. */
+      .debug-visible { display: block; }
+      .debug-hidden { display: none; }
     </style>
-    <!-- Updated Import Map for better compatibility -->
-    <script type="importmap">
+  <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "react-dom": "https://esm.sh/react-dom@18.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0"
   }
 }
 </script>
-    <!-- Explicitly load the entry point -->
-    <script type="module" src="./index.tsx"></script>
-  </head>
+</head>
   <body>
     <div id="root"></div>
+    
+    <!-- Debug Console Container -->
+    <div id="debug-log">
+      <div class="log-entry info">--- System Ready. Waiting for App... ---</div>
+    </div>
+
+    <!-- Logger Script: Intercepts console logs immediately -->
     <script>
-      // Fallback error handler to debug "black screen" issues
-      window.addEventListener('error', function(e) {
-        console.error("Game Error:", e);
-      });
+      (function() {
+        var debugDiv = document.getElementById('debug-log');
+        if (!debugDiv) return;
+
+        function appendLog(type, args) {
+          var msg = Array.from(args).map(function(arg) {
+            try {
+              return (typeof arg === 'object') ? JSON.stringify(arg) : String(arg);
+            } catch (e) {
+              return '[Object]';
+            }
+          }).join(' ');
+          
+          var div = document.createElement('div');
+          div.className = 'log-entry ' + type;
+          // Time stamp
+          var time = new Date().toLocaleTimeString();
+          div.textContent = '[' + time + '] ' + msg;
+          debugDiv.appendChild(div);
+          debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+
+        // Save original methods
+        var originalLog = console.log;
+        var originalWarn = console.warn;
+        var originalError = console.error;
+
+        // Override
+        console.log = function() { appendLog('info', arguments); originalLog.apply(console, arguments); };
+        console.warn = function() { appendLog('warn', arguments); originalWarn.apply(console, arguments); };
+        console.error = function() { appendLog('error', arguments); originalError.apply(console, arguments); };
+        
+        // Catch global errors
+        window.addEventListener('error', function(event) {
+          console.error("Uncaught Exception:", event.message, "at", event.filename, ":", event.lineno);
+        });
+        
+        // Catch unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+          console.error("Unhandled Rejection:", event.reason);
+        });
+
+      })();
     </script>
+
+    <!-- Explicitly load the entry point -->
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

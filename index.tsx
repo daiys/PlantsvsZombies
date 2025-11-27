@@ -2,22 +2,31 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
-console.log("Starting React vs Zombies...");
+console.log("--------------------------------------------------");
+console.log("🚀 Starting React vs Zombies application...");
+console.log("Environment check:", { 
+  userAgent: navigator.userAgent, 
+  screen: `${window.innerWidth}x${window.innerHeight}` 
+});
 
 const rootElement = document.getElementById('root');
-if (!rootElement) {
-  console.error("Root element not found!");
-  throw new Error("Could not find root element to mount to");
-}
 
-try {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-  console.log("React mounted successfully.");
-} catch (err) {
-  console.error("Failed to mount React app:", err);
+if (!rootElement) {
+  console.error("❌ FATAL: Root element 'root' not found in DOM!");
+} else {
+  console.log("✅ Root element found. Attempting to mount React...");
+  
+  try {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+    console.log("✅ ReactDOM.createRoot called successfully.");
+    console.log("✨ App should be visible now.");
+    console.log("ℹ️ If screen is still black, check for errors in components.");
+  } catch (err) {
+    console.error("❌ React Mount Failed:", err);
+  }
 }
