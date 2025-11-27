@@ -22,7 +22,7 @@ import { PlantCard } from './components/PlantCard';
 import { GameBoard } from './components/GameBoard';
 
 // Utility for unique IDs
-const generateId = () => Math.random().toString(36).substr(2, 9);
+const generateId = () => Math.random().toString(36).slice(2, 9);
 
 export default function App() {
   // Game State
@@ -273,7 +273,7 @@ export default function App() {
   };
 
   return (
-    <div className="w-full h-screen bg-gray-900 flex flex-col items-center justify-center overflow-hidden relative">
+    <div className="w-full h-full bg-gray-900 flex flex-col items-center justify-center overflow-hidden relative">
       
       {/* HUD - Always visible if playing */}
       {status === GameStatus.PLAYING && (
