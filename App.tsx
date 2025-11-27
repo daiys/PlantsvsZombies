@@ -273,91 +273,95 @@ export default function App() {
   };
 
   return (
-    <div className="w-full h-full bg-gray-900 flex flex-col items-center justify-center overflow-hidden relative">
+    // Outer container: Full viewport, Flex centered
+    <div className="w-screen h-screen bg-gray-900 flex items-center justify-center overflow-hidden p-2 md:p-4">
       
-      {/* HUD - Always visible if playing */}
-      {status === GameStatus.PLAYING && (
-        <div className="absolute top-0 left-0 right-0 z-20 p-2 flex justify-center items-start pointer-events-none">
-          <div className="bg-amber-100 border-4 border-amber-800 rounded-lg p-2 flex gap-4 pointer-events-auto shadow-xl">
-            {/* Sun Counter */}
-            <div className="flex flex-col items-center justify-center bg-amber-200 border-2 border-amber-600 rounded p-2 min-w-[80px]">
-              <span className="text-3xl">☀️</span>
-              <span className="text-xl font-bold text-amber-900 font-game">{Math.floor(sun)}</span>
-            </div>
-            
-            {/* Plant Selector */}
-            <div className="flex gap-2">
-              {Object.values(PlantType).map((type) => (
-                <PlantCard 
-                  key={type}
-                  type={type}
-                  stats={PLANT_STATS[type]}
-                  canAfford={sun >= PLANT_STATS[type].cost}
-                  isSelected={selectedPlantType === type}
-                  onClick={() => setSelectedPlantType(type)}
-                />
-              ))}
-            </div>
-            
-             {/* Score / Wave */}
-             <div className="flex flex-col items-center justify-center ml-4 bg-gray-800 text-white border-2 border-gray-600 rounded p-2 min-w-[80px]">
-              <span className="text-xs uppercase text-gray-400">Score</span>
-              <span className="font-bold">{score}</span>
-              <span className="text-xs uppercase text-gray-400 mt-1">Level</span>
-              <span className="font-bold">{Math.floor(wave)}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Main Game Area */}
-      <div className="relative w-full max-w-5xl aspect-[16/9] bg-green-800 border-8 border-green-900 rounded-lg shadow-2xl overflow-hidden">
+      {/* Game Container: Constrained by max-height (vh) and max-width. Maintains 16/9 Aspect Ratio. */}
+      {/* max-h-[85vh] leaves space for the bottom console or UI margins */}
+      <div className="relative w-full max-w-6xl max-h-[85vh] aspect-[16/9] bg-green-800 border-8 border-green-900 rounded-lg shadow-2xl overflow-hidden flex flex-col">
         
-        {/* Game Content */}
-        {status === GameStatus.PLAYING ? (
-          <GameBoard 
-            plants={plants}
-            zombies={zombies}
-            projectiles={projectiles}
-            suns={suns}
-            onGridClick={handleGridClick}
-            onCollectSun={collectSun}
-          />
-        ) : (
-          /* Menus */
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-30 backdrop-blur-sm">
-            {status === GameStatus.MENU && (
-              <div className="text-center animate-bounce">
-                <h1 className="text-6xl md:text-8xl font-game text-green-500 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] mb-4">
-                  React <span className="text-white">vs</span> Zombies
-                </h1>
-                <button 
-                  onClick={startGame}
-                  className="px-8 py-4 bg-green-600 hover:bg-green-500 text-white font-bold text-2xl rounded-xl shadow-lg border-b-8 border-green-800 transition-all active:translate-y-1 active:border-b-0"
-                >
-                  Start Game
-                </button>
+        {/* HUD - Inside the relative game container so it scales with the game */}
+        {status === GameStatus.PLAYING && (
+          <div className="absolute top-0 left-0 right-0 z-20 p-2 flex justify-center items-start pointer-events-none">
+            <div className="bg-amber-100/90 backdrop-blur-sm border-4 border-amber-800 rounded-lg p-2 flex gap-2 md:gap-4 pointer-events-auto shadow-xl scale-75 md:scale-100 origin-top">
+              {/* Sun Counter */}
+              <div className="flex flex-col items-center justify-center bg-amber-200 border-2 border-amber-600 rounded p-1 min-w-[60px] md:min-w-[80px]">
+                <span className="text-2xl md:text-3xl">☀️</span>
+                <span className="text-lg md:text-xl font-bold text-amber-900 font-game">{Math.floor(sun)}</span>
               </div>
-            )}
-            
-            {status === GameStatus.GAME_OVER && (
-              <div className="text-center bg-white p-8 rounded-xl shadow-2xl border-4 border-red-900 max-w-md">
-                <h2 className="text-5xl font-game text-red-600 mb-2">THE ZOMBIES ATE YOUR BRAINS!</h2>
-                <p className="text-gray-600 text-xl mb-6">Final Score: {score}</p>
-                <button 
-                  onClick={startGame}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xl rounded-lg shadow-md transition-colors"
-                >
-                  Try Again
-                </button>
+              
+              {/* Plant Selector */}
+              <div className="flex gap-1 md:gap-2">
+                {Object.values(PlantType).map((type) => (
+                  <PlantCard 
+                    key={type}
+                    type={type}
+                    stats={PLANT_STATS[type]}
+                    canAfford={sun >= PLANT_STATS[type].cost}
+                    isSelected={selectedPlantType === type}
+                    onClick={() => setSelectedPlantType(type)}
+                  />
+                ))}
               </div>
-            )}
+              
+               {/* Score / Wave */}
+               <div className="flex flex-col items-center justify-center ml-2 md:ml-4 bg-gray-800 text-white border-2 border-gray-600 rounded p-1 min-w-[60px] md:min-w-[80px]">
+                <span className="text-[10px] uppercase text-gray-400">Score</span>
+                <span className="font-bold text-sm md:text-base">{score}</span>
+                <span className="text-[10px] uppercase text-gray-400 mt-1">Level</span>
+                <span className="font-bold text-sm md:text-base">{Math.floor(wave)}</span>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* Main Game Board Area */}
+        <div className="relative w-full h-full">
+          {status === GameStatus.PLAYING ? (
+            <GameBoard 
+              plants={plants}
+              zombies={zombies}
+              projectiles={projectiles}
+              suns={suns}
+              onGridClick={handleGridClick}
+              onCollectSun={collectSun}
+            />
+          ) : (
+            /* Menus Overlay */
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-30 backdrop-blur-sm">
+              {status === GameStatus.MENU && (
+                <div className="text-center animate-bounce">
+                  <h1 className="text-5xl md:text-8xl font-game text-green-500 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] mb-4">
+                    React <span className="text-white">vs</span> Zombies
+                  </h1>
+                  <button 
+                    onClick={startGame}
+                    className="px-8 py-4 bg-green-600 hover:bg-green-500 text-white font-bold text-2xl rounded-xl shadow-lg border-b-8 border-green-800 transition-all active:translate-y-1 active:border-b-0"
+                  >
+                    Start Game
+                  </button>
+                </div>
+              )}
+              
+              {status === GameStatus.GAME_OVER && (
+                <div className="text-center bg-white p-8 rounded-xl shadow-2xl border-4 border-red-900 max-w-md mx-4">
+                  <h2 className="text-4xl md:text-5xl font-game text-red-600 mb-2">THE ZOMBIES ATE YOUR BRAINS!</h2>
+                  <p className="text-gray-600 text-xl mb-6">Final Score: {score}</p>
+                  <button 
+                    onClick={startGame}
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xl rounded-lg shadow-md transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="absolute bottom-2 text-gray-500 text-xs">
-        Use standard React hooks and standard HTML5/CSS elements. No canvas element used.
+      <div className="absolute bottom-2 right-2 text-gray-600 text-xs hidden md:block">
+        React vs Zombies • No Canvas • Pure DOM
       </div>
     </div>
   );

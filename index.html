@@ -52,32 +52,33 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 150px;
-        background: rgba(0, 0, 0, 0.85);
+        height: auto;
+        max-height: 25vh; /* Limit height to 25% of screen */
+        background: rgba(0, 0, 0, 0.6); /* More transparent */
+        backdrop-filter: blur(4px); /* Blur effect */
         color: #0f0;
         font-family: monospace;
-        font-size: 12px;
+        font-size: 11px;
         overflow-y: auto;
         z-index: 9999;
-        padding: 10px;
-        border-top: 2px solid #0f0;
-        pointer-events: none; /* Let clicks pass through to game */
+        padding: 8px;
+        border-top: 1px solid rgba(0, 255, 0, 0.3);
+        pointer-events: none; /* Pass clicks through */
       }
-      #debug-log .log-entry { margin-bottom: 2px; border-bottom: 1px solid #333; word-wrap: break-word; }
+      #debug-log .log-entry { margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); word-wrap: break-word; }
       #debug-log .log-entry.error { color: #ff5555; background: rgba(255, 0, 0, 0.1); }
       #debug-log .log-entry.warn { color: #ffff55; }
-      #debug-log .log-entry.info { color: #55ffff; }
+      #debug-log .log-entry.info { color: #aaffaa; }
       
-      /* Only show console if we are not in production or if needed. Keeping it visible for debugging. */
       .debug-visible { display: block; }
       .debug-hidden { display: none; }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
